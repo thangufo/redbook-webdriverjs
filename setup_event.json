@@ -4,14 +4,14 @@
     "market" : "Racing Live",
     "products" : [
         {
-            "name" : "LuxBOG",
-            "id": 733,
-            "addToMarket" : true
-        },
-        {
             "name" : "SP",
             "id": 234,
             "addToMarket" : false
+        },
+        {
+            "name" : "LuxBOG",
+            "id": 733,
+            "addToMarket" : true
         }
     ],
     "disableLuxbookDVP" : true,
