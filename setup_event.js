@@ -1,8 +1,8 @@
 var fs = require('fs');
-var config = JSON.parse(fs.readFileSync('config.json', 'utf8'));
+var config = JSON.parse(fs.readFileSync(process.argv[2], 'utf8'));
 
-//read the test data
-var testData = JSON.parse(fs.readFileSync(process.argv[2], 'utf8'));
+//read the test data 123
+var testData = JSON.parse(fs.readFileSync(process.argv[3], 'utf8'));
 
 var webdriver = require('selenium-webdriver');
 var browser = new webdriver.Builder().usingServer().withCapabilities({'browserName': 'chrome' }).build();
@@ -100,9 +100,11 @@ browser.findElement(webdriver.By.css('[name="button_114"]')).click() //click on 
                     //we only want to enable a settings, not disable
                     buttons[j].findElement(webdriver.By.xpath("following-sibling::input[@class='toggle_values_"+testData.products[i].id+"']")).then((function(j){
                         return function(input){
-                            if (input.getAttribute("value") != "1") {
-                                buttons[j].click();
-                            }
+                            input.getAttribute("value").then(function(value){
+                                if (value != "1") {
+                                    buttons[j].click();
+                                }
+                            });
                         }
                     })(j));
                 }
@@ -136,24 +138,18 @@ browser.findElement(webdriver.By.css('[name="button_114"]')).click() //click on 
                 for (var j=0;j<inputs.length;j++){
                     inputs[j].click();
                     var actions = browser.actions();
-                    actions.sendKeys(testData.newEvent.selections[j].prices[i].winPrice.toString()).perform();
-                    if (j == inputs.length-1) {
-                        actions.sendKeys("\n").perform();
-                    }
+                    actions.sendKeys(testData.newEvent.selections[j].prices[i].winPrice.toString()+"\n").perform();
                 }
             }
         })(i));
         
-        //place price first
+        //place price
         browser.findElements(webdriver.By.css('[product_id="'+testData.products[i].id+'"][bet_type="2"]')).then((function(i){
             return function(inputs){
                 for (var j=0;j<inputs.length;j++){
                     inputs[j].click();
                     var actions = browser.actions();
-                    actions.sendKeys(testData.newEvent.selections[j].prices[i].placePrice.toString()).perform();
-                    if (j == inputs.length-1) {
-                        actions.sendKeys("\n").perform();
-                    }
+                    actions.sendKeys(testData.newEvent.selections[j].prices[i].placePrice.toString()+"\n").perform();
                 }
             }
         })(i));
