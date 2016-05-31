@@ -1,7 +1,7 @@
 var fs = require('fs');
 var config = JSON.parse(fs.readFileSync(process.argv[2], 'utf8'));
 
-//read the test data 123
+//read the test data
 var testData = JSON.parse(fs.readFileSync(process.argv[3], 'utf8'));
 
 var webdriver = require('selenium-webdriver');
@@ -22,9 +22,22 @@ var eventId;
 browser.switchTo().frame(topFrame);
 browser.executeScript("$('#cat>option:contains(\""+testData.category+"\")').attr('selected','selected').parent().focus();");
 browser.executeScript("$('#cat>option:contains(\""+testData.category+"\")').parent().change();");
-browser.sleep(100);
+//wait until the AJAX call finish
+browser.wait(function(){
+    return browser.findElements(webdriver.By.css('#subcat>option')).then(function(items){
+        return items.length > 1;
+    });
+},200);
+
 browser.executeScript("$('#subcat>option:contains(\""+testData.subCategory+"\")').attr('selected','selected').parent().focus();");
 browser.executeScript("$('#subcat>option:contains(\""+testData.subCategory+"\")').parent().change();");
+//wait until the AJAX call finish
+browser.wait(function(){
+    return browser.findElements(webdriver.By.css('#event_id>option')).then(function(items){
+        return items.length > 1;
+    });
+},200);
+
 browser.findElement(webdriver.By.css('[name="button_114"]')).click() //click on F4 Events button
 .then(function(){
     browser.sleep(50);
